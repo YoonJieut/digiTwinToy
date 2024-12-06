@@ -9,3 +9,10 @@ React와 three.js를 사용하여 한국 관련 시계열 데이터를 기반으
 - 시계열 데이터 로딩 및 시각적 반영
 - React와 three.js를 이용한 3D 오브젝트 생성 및 업데이트
 - 간단한 CI/CD 파이프라인 설정 및 자동 배포
+
+### 스택 :
+
+- three.js
+- python
+- react
+- papaparse
