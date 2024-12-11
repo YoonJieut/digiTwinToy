@@ -1,26 +1,26 @@
-import React, { useEffect, useRef } from "react";
+// src/components/3D/ThreeScene.js
 
-export default function ThreeScene() {
-  const mountRef = React.useRef(null);
+import React from "react";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
 
-  useEffect(() => {
-    console.log(" mountRef :", mountRef.current);
-  }, []);
-
+const ThreeScene = () => {
   return (
-    <div
-      style={{
-        position: "relative",
-        backgroundColor: "gray",
-      }}
-    >
-      relative div
-      <div
-        ref={mountRef}
-        style={{ width: "100%", height: "100vh", outline: "1px solid black" }}
-      >
-        내부 div
-      </div>
-    </div>
+    <Canvas>
+      {/* 카메라 컨트롤 (OrbitControls) */}
+      <OrbitControls />
+
+      {/* 기본 조명 */}
+      <ambientLight intensity={0.5} />
+      <pointLight position={[10, 10, 10]} />
+
+      {/* 기본 큐브 */}
+      <mesh>
+        <boxGeometry args={[1, 1, 1]} />
+        <meshStandardMaterial color="green" />
+      </mesh>
+    </Canvas>
   );
-}
+};
+
+export default ThreeScene;
