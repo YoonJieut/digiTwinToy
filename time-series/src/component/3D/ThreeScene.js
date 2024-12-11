@@ -9,10 +9,15 @@ const ThreeScene = () => {
     <Canvas>
       {/* 카메라 컨트롤 (OrbitControls) */}
       <OrbitControls />
+      {/* 카메라 위치 설정 */}
+      {/* <perspectiveCamera position={[0, 0, 0]} /> */}
 
       {/* 기본 조명 */}
       <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} />
+      <pointLight position={[-10, 10, 10]} />
+
+      {/* 추가 조명 */}
+      <directionalLight position={[5, 5, 5]} intensity={3} />
 
       {/* 기본 큐브 */}
       <mesh>
