@@ -6,7 +6,12 @@ function App() {
   return (
     <div
       className="App"
-      style={{ width: "100vw", height: "100vh", position: "relative" }}
+      style={{
+        width: "100vw",
+        height: "100vh",
+        position: "relative",
+        pointerEvents: "auto",
+      }}
     >
       <ThreeScene />
     </div>

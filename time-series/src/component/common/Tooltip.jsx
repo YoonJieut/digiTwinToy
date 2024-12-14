@@ -27,7 +27,7 @@ const Tooltip = ({ position = { x: 0, y: 0 }, text }) => {
         color: "white",
         padding: "5px 10px",
         borderRadius: "2px",
-        pointerEvents: "none",
+        pointerEvents: "none", // 이벤트 전달 방지
         transform: "translate(-50%, -100%)",
         whiteSpace: "nowrap",
         boxShadow: "0 2px 5px 0 rgba(0,0,0,0.26)",
