@@ -2,40 +2,23 @@
 
 import React from "react";
 
-/**
- * Tooltip 컴포넌트
- *
- * @param {Object} props - 컴포넌트 속성
- * @param {Object} props.position - 툴팁의 위치 (기본값: { x: 0, y: 0 })
- * @param {number} props.position.x - 툴팁의 x 좌표
- * @param {number} props.position.y - 툴팁의 y 좌표
- * @param {string} props.text - 툴팁에 표시될 텍스트
- *
- * @example
- * <Tooltip position={{ x: 100, y: 200 }} text="This is a tooltip" />
- */
-const Tooltip = ({ position = { x: 0, y: 0 }, text }) => {
+const Tooltip = ({ position, text }) => {
   const { x, y } = position;
+  const tooltipStyle = {
+    position: "absolute",
+    top: y,
+    left: x,
+    backgroundColor: "rgba(0,0,0,0.7)",
+    color: "white",
+    padding: "5px 10px",
+    borderRadius: "4px",
+    pointerEvents: "none", // 이벤트 전달 방지
+    transform: "translate(-50%, -100%)",
+    whiteSpace: "nowrap",
+    zIndex: 10, // 툴팁이 다른 요소 위에 표시되도록 설정
+  };
 
-  return (
-    <div
-      style={{
-        position: "absolute",
-        left: x,
-        top: y,
-        backgroundColor: "rgba(0,0,0,0.7)",
-        color: "white",
-        padding: "5px 10px",
-        borderRadius: "2px",
-        pointerEvents: "none", // 이벤트 전달 방지
-        transform: "translate(-50%, -100%)",
-        whiteSpace: "nowrap",
-        boxShadow: "0 2px 5px 0 rgba(0,0,0,0.26)",
-      }}
-    >
-      {text}
-    </div>
-  );
+  return <div style={tooltipStyle}>{text}</div>;
 };
 
 export default Tooltip;
