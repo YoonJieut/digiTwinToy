@@ -1,14 +1,13 @@
 // src/components/3D/ThreeScene.jsx
 
 import React, { useState } from "react";
-import { OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import * as THREE from "three"; // Raycaster를 직접 사용하려면 필요
+import { OrbitControls } from "@react-three/drei";
 import Cube from "./Cube";
 import Tooltip from "../common/Tooltip";
 
 const ThreeScene = () => {
-  // tooltip 상태 관리
+  // Tooltip 상태 관리
   const [tooltip, setTooltip] = useState({
     visible: false,
     x: 0,
@@ -32,54 +31,19 @@ const ThreeScene = () => {
     }
   }
 
-  const handlePointerMove = (event) => {
-    const mouse = new THREE.Vector2();
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-    console.log("mouse:", mouse); // {x: -1~1, y: -1~1}
-
-    const raycaster = new THREE.Raycaster();
-    raycaster.setFromCamera(mouse, event.camera);
-    const intersects = raycaster.intersectObjects(event.scene.children, true);
-
-    console.log("intersects:", intersects);
-
-    if (intersects.length > 0) {
-      const intersectedObject = intersects[0].object;
-      if (intersectedObject.userData.temperature !== undefined) {
-        setTooltip({
-          visible: true,
-          x: event.clientX,
-          y: event.clientY,
-          text: `온도: 섭씨 ${intersectedObject.userData.temperature}도`,
-        });
-      }
-    } else {
-      setTooltip({
-        visible: false,
-        x: 0,
-        y: 0,
-        text: "",
-      });
-    }
+  // 툴팁 업데이트 함수
+  const handleTooltip = (visible, x, y, text) => {
+    setTooltip({ visible, x, y, text });
   };
 
-  // useEffect(() => {
-  //   console.log("툴팁 상태 변경:", tooltip);
-  // }, [tooltip]);
-
   return (
-    <>
+    <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
       <Canvas
         style={{ width: "100%", height: "100%" }}
         camera={{ position: [0, 5, 10], fov: 60 }}
-        onPointerMove={handlePointerMove}
       >
-        {/* 카메라 컨트롤 (OrbitControls) */}
+        {/* 카메라 컨트롤 */}
         <OrbitControls />
-        {/* 헬퍼 추가 */}
-        {/* <AxesHelper args={[5]} />
-        <GridHelper args={[10, 10]} /> */}
         {/* 조명 설정 */}
         <ambientLight intensity={1} />
         <pointLight position={[-10, 10, 10]} />
@@ -93,17 +57,20 @@ const ThreeScene = () => {
             color={cube.color}
             temperature={cube.temperature}
             regionCode={cube.regionCode}
+            onHover={handleTooltip} // 콜백 함수 전달
           />
         ))}
       </Canvas>
 
+      {/* 툴팁 표시 */}
       {tooltip.visible && (
         <Tooltip
           position={{ x: tooltip.x, y: tooltip.y }}
           text={tooltip.text}
+          visible={tooltip.visible}
         />
       )}
-    </>
+    </div>
   );
 };
 
