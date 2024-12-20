@@ -32,7 +32,9 @@ const ThreeScene = () => {
   }
 
   // 툴팁 업데이트 함수
+  // todo : useCallback 사용하여 리렌더링 횟수 최적화
   const handleTooltip = (visible, x, y, text) => {
+    // console.log("Tooltip 업데이트 :", visible, x, y, text);
     setTooltip({ visible, x, y, text });
   };
 
