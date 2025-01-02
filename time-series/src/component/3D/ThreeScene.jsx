@@ -6,10 +6,13 @@ import { OrbitControls } from "@react-three/drei";
 import Cube from "./Cube";
 import Tooltip from "../common/Tooltip";
 import Slider from "../UI/Slider";
-import { parseCSV } from "../../utills/utils";
+import { parseCSV } from "../../utils/utils";
 
+/**
+ * ThreeScene 컴포넌트는 3D 씬을 렌더링하며, CSV 데이터를 파싱하여 큐브에 적용합니다.
+ */
 const ThreeScene = () => {
-  // Tooltip 상태 관리
+  // 툴팁 상태 관리
   const [tooltip, setTooltip] = useState({
     visible: false,
     x: 0,
@@ -17,13 +20,16 @@ const ThreeScene = () => {
     text: "",
   });
 
+  // 슬라이드바에서 선택된 시간을 관리 (1시간 ~ 24시간)
+  const [selectedHour, setSelectedHour] = useState(1);
+
   // CSV 데이터를 저장할 상태
   const [csvData, setCsvData] = useState([]);
 
-  // CSV 파일 목록 상태 관리
+  // CSV 파일 경로 목록을 저장할 상태
   const [csvFilePaths, setCsvFilePaths] = useState([]);
 
-  // 매니페스트 파일 로드 및 CSV 파일 경로 설정
+  // 매니페스트 파일을 로드하여 CSV 파일 경로를 설정
   useEffect(() => {
     const loadManifest = async () => {
       try {
@@ -38,6 +44,7 @@ const ThreeScene = () => {
           (name) => process.env.PUBLIC_URL + `/data/csv/${name}`
         );
         setCsvFilePaths(paths);
+        console.log("CSV 파일 경로 로드 완료:", paths);
       } catch (error) {
         console.error("매니페스트 파일 로드 오류:", error);
       }
@@ -46,7 +53,7 @@ const ThreeScene = () => {
     loadManifest();
   }, []);
 
-  // CSV 파일 로드 및 파싱
+  // 모든 CSV 파일을 로드하고 파싱하여 csvData 상태에 저장
   useEffect(() => {
     if (csvFilePaths.length === 0) return;
 
@@ -55,41 +62,9 @@ const ThreeScene = () => {
         const allData = await Promise.all(
           csvFilePaths.map((path) => parseCSV(path))
         );
-        // allData는 배열의 배열 형태
-        // 각 CSV 파일의 데이터를 하나의 배열로 병합
         const mergedData = allData.flat();
-
-        // 데이터 가공: 각 행을 객체로 변환
-        const processedData = mergedData
-          .map((row) => {
-            // 각 CSV 행의 내용을 기반으로 데이터 추출
-            // 예: ['day:4', 'hour:0200', 'forecast:+6', 'value:3.0', 'location:68_100', 'Start:20241204']
-            const dataObj = {};
-            row.forEach((item) => {
-              const [key, value] = item.split(":");
-              if (key && value) {
-                dataObj[key.trim().toLowerCase()] = value.trim();
-              }
-            });
-            return {
-              day: parseInt(dataObj.day, 10),
-              hour: parseInt(dataObj.hour, 10) / 100, // '0200' -> 2
-              forecast: dataObj.forecast,
-              value: parseFloat(dataObj.value),
-              location: dataObj.location,
-              start: dataObj.start,
-            };
-          })
-          .filter(
-            (row) =>
-              !isNaN(row.day) &&
-              !isNaN(row.hour) &&
-              !isNaN(row.value) &&
-              row.location
-          );
-
-        setCsvData(processedData);
-        console.log("Processed CSV Data:", processedData);
+        setCsvData(mergedData);
+        console.log("모든 CSV 데이터 로드 완료:", mergedData);
       } catch (error) {
         console.error("CSV 파일 로드 및 파싱 오류:", error);
       }
@@ -98,37 +73,48 @@ const ThreeScene = () => {
     loadAllCSV();
   }, [csvFilePaths]);
 
-  // 툴팁 업데이트 함수
-  const handleTooltip = useCallback((visible, x, y, text) => {
-    setTooltip({ visible, x, y, text });
-  }, []);
+  // 툴팁 상태를 업데이트하는 함수
+  const handleTooltip = useCallback(
+    (visible, x, y, text) => {
+      setTooltip({ visible, x, y, text });
+      console.log(
+        `툴팁 상태 업데이트: visible=${visible}, x=${x}, y=${y}, text=${text}`
+      );
+    },
+    [tooltip]
+  );
 
-  // 슬라이드바 변경 핸들러
+  // 슬라이드바 값이 변경될 때 호출되는 핸들러
   const handleSliderChange = (event) => {
-    setSelectedHour(parseInt(event.target.value, 10));
+    const newHour = parseInt(event.target.value, 10);
+    setSelectedHour(newHour);
+    console.log("선택된 시간 변경:", newHour);
   };
 
-  // 큐브 포지션 배열 생성
+  // 3x3 그리드의 큐브 위치를 생성
   const gridSize = 3; // 그리드 크기
   const spacing = 1.4; // 큐브 간 간격
 
   const cubes = [];
+  let regionCode = 68100; // 초기 지역 코드
   for (let x = 0; x < gridSize; x++) {
     for (let z = 0; z < gridSize; z++) {
       cubes.push({
         position: [(x - 1) * spacing, 0, (z - 1) * spacing],
-        regionCode: `68_1${x}${z}`, // 지역 코드
+        regionCode: `68_${regionCode.toString().slice(-3)}`, // 지역 코드 설정
       });
+      regionCode++; // 지역 코드 증가
     }
   }
 
   return (
     <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
+      {/* 3D 캔버스 설정 */}
       <Canvas
         style={{ width: "100%", height: "100%" }}
         camera={{ position: [0, 5, 10], fov: 60 }}
       >
-        {/* 카메라 컨트롤 */}
+        {/* 카메라 컨트롤 추가 */}
         <OrbitControls />
         {/* 조명 설정 */}
         <ambientLight intensity={1} />
@@ -149,9 +135,7 @@ const ThreeScene = () => {
       </Canvas>
 
       {/* 슬라이드바 추가 */}
-      <div style={styles.sliderContainer}>
-        <Slider value={selectedHour} onChange={handleSliderChange} />
-      </div>
+      <Slider value={selectedHour} onChange={handleSliderChange} />
 
       {/* 툴팁 표시 */}
       {tooltip.visible && (
@@ -162,19 +146,6 @@ const ThreeScene = () => {
       )}
     </div>
   );
-};
-
-const styles = {
-  sliderContainer: {
-    position: "absolute",
-    bottom: "20px",
-    left: "50%",
-    transform: "translateX(-50%)",
-    width: "300px",
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
-    borderRadius: "8px",
-    padding: "10px",
-  },
 };
 
 export default ThreeScene;
