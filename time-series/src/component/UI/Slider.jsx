@@ -27,7 +27,14 @@ import React from "react";
 const Slider = ({ value, onChange }) => {
   const styles = {
     container: {
+      position: "absolute",
+      bottom: "20px",
+      left: "50%",
+      transform: "translateX(-50%)",
       width: "300px",
+      backgroundColor: "rgba(255, 255, 255, 0.8)",
+      borderRadius: "8px",
+      padding: "10px",
       margin: "0 auto",
       textAlign: "center",
     },

@@ -86,11 +86,6 @@ export const parseCSV = (filePath) => {
  *
  * @param {number} value - 온도 값.
  * @returns {string} 온도 값에 해당하는 색상.
- *
- * @example
- * getColor(6); // "red" 반환
- * getColor(3); // "orange" 반환
- * getColor(-1); // "blue" 반환
  */
 export const getColor = (value) => {
   if (value > 5) {
@@ -102,6 +97,6 @@ export const getColor = (value) => {
   } else if (value < 0) {
     return "lightblue";
   } else {
-    return "green";
+    return "green"; // 0인 경우
   }
 };
