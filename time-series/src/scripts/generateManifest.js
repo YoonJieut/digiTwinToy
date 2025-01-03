@@ -3,7 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const csvDir = path.join(__dirname, "../public/data/csv");
+const csvDir = path.join(__dirname, "../../public/data/csv");
 const manifestPath = path.join(csvDir, "csv_manifest.json");
 
 fs.readdir(csvDir, (err, files) => {
