@@ -17,7 +17,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "generate-manifest": "node scripts/generateManifest.js"
+    "generate-manifest": "node src/scripts/generateManifest.js",
+    "clean-csv": "node src/scripts/cleanCsv.js"
   },
   "eslintConfig": {
     "extends": [
